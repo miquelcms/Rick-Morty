@@ -23,5 +23,17 @@ dependencyResolutionManagement {
     }
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "RickMorty"
+
 include(":app")
+
+include(":core:analytics")
+include(":core:data")
+include(":core:designsystem")
+include(":core:domain")
+include(":core:ui")
+include(":feature:characters:data")
+include(":feature:characters:domain")
+include(":feature:characters:ui")

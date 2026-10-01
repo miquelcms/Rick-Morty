@@ -22,6 +22,12 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.analytics)
+    implementation(projects.core.data)
+    implementation(projects.core.designsystem)
+    implementation(projects.feature.characters.data)
+    implementation(projects.feature.characters.ui)
+
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
