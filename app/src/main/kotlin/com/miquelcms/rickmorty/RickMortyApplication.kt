@@ -1,0 +1,21 @@
+package com.miquelcms.rickmorty
+
+import android.app.Application
+import com.miquelcms.rickmorty.core.analytics.di.coreAnalyticsModule
+import com.miquelcms.rickmorty.core.data.di.coreDataModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+
+class RickMortyApplication : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        startKoin {
+            androidContext(this@RickMortyApplication)
+            modules(
+                coreAnalyticsModule,
+                coreDataModule,
+            )
+        }
+    }
+}

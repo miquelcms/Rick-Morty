@@ -8,4 +8,16 @@ android {
 
 dependencies {
     implementation(projects.core.domain)
+    implementation(projects.core.analytics)
+
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.android)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.okhttp)
+    api(libs.retrofit)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.okhttp.mockwebserver)
 }
