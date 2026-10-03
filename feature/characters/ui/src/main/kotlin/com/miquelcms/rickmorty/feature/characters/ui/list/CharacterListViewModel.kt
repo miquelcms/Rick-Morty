@@ -116,7 +116,6 @@ class CharacterListViewModel(
             }
             val current = state.value
             characterRepository.getCharacters(
-                page = FIRST_PAGE,
                 filters = current.filters.toCharacterFilters(name = current.query),
                 forceRefresh = isRefresh,
             ).onSuccess { page ->
@@ -155,9 +154,9 @@ class CharacterListViewModel(
         loadJob = viewModelScope.launch {
             _state.update { it.copy(isLoadingNextPage = true, nextPageError = null) }
             characterRepository.getCharacters(
-                page = pageToLoad,
                 filters = current.filters.toCharacterFilters(name = current.query),
                 forceRefresh = false,
+                page = pageToLoad,
             ).onSuccess { page ->
                 nextPage = page.nextPage
                 _state.update {
@@ -188,7 +187,6 @@ class CharacterListViewModel(
     }
 
     private companion object {
-        const val FIRST_PAGE = 1
         const val SEARCH_DEBOUNCE_MILLIS = 400L
         const val KEY_QUERY = "query"
         const val KEY_STATUS = "status"

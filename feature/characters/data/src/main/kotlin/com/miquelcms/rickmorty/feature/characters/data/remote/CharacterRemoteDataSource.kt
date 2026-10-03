@@ -1,4 +1,4 @@
-package com.miquelcms.rickmorty.feature.characters.domain.repository
+package com.miquelcms.rickmorty.feature.characters.data.remote
 
 import com.miquelcms.rickmorty.core.domain.DataError
 import com.miquelcms.rickmorty.core.domain.Result
@@ -6,12 +6,12 @@ import com.miquelcms.rickmorty.feature.characters.domain.model.Character
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterFilters
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterPage
 
-interface CharacterRepository {
+internal interface CharacterRemoteDataSource {
     suspend fun getCharacters(
+        page: Int?,
         filters: CharacterFilters,
         forceRefresh: Boolean,
-        page: Int? = null,
-    ): Result<CharacterPage, DataError>
+    ): Result<CharacterPage, DataError.Network>
 
-    suspend fun getCharacter(id: Int): Result<Character, DataError>
+    suspend fun getCharacter(id: Int): Result<Character, DataError.Network>
 }

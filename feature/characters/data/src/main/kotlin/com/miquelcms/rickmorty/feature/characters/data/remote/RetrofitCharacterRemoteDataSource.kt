@@ -1,4 +1,4 @@
-package com.miquelcms.rickmorty.feature.characters.data.repository
+package com.miquelcms.rickmorty.feature.characters.data.remote
 
 import com.miquelcms.rickmorty.core.analytics.ErrorReporter
 import com.miquelcms.rickmorty.core.data.network.safeCall
@@ -12,50 +12,22 @@ import com.miquelcms.rickmorty.feature.characters.data.remote.api.CharacterApi
 import com.miquelcms.rickmorty.feature.characters.domain.model.Character
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterFilters
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterPage
-import com.miquelcms.rickmorty.feature.characters.domain.repository.CharacterRepository
-import java.util.concurrent.ConcurrentHashMap
 
-internal class NetworkCharacterRepository(
+internal class RetrofitCharacterRemoteDataSource(
     private val api: CharacterApi,
     private val errorReporter: ErrorReporter,
-) : CharacterRepository {
-
-    private val cachedCharacters = ConcurrentHashMap<Int, Character>()
+) : CharacterRemoteDataSource {
 
     override suspend fun getCharacters(
-        page: Int,
+        page: Int?,
         filters: CharacterFilters,
         forceRefresh: Boolean,
-    ): Result<CharacterPage, DataError> {
-        var pageToLoad = page
-        while (true) {
-            val characterPage = when (val result = loadPage(pageToLoad, filters, forceRefresh)) {
-                is Result.Success -> result.data
-                is Result.Failure -> return result
-            }
-            val nextPage = characterPage.nextPage
-            if (characterPage.characters.isNotEmpty() || nextPage == null) {
-                return Result.Success(characterPage)
-            }
-            pageToLoad = nextPage
-        }
-    }
-
-    override suspend fun getCharacter(id: Int): Result<Character, DataError> {
-        cachedCharacters[id]?.let { return Result.Success(it) }
-        return safeCall(errorReporter) { api.getCharacter(id) }
-            .map { dto -> dto.toCharacter().also { cachedCharacters[it.id] = it } }
-    }
-
-    private suspend fun loadPage(
-        page: Int,
-        filters: CharacterFilters,
-        forceRefresh: Boolean,
-    ): Result<CharacterPage, DataError> {
+    ): Result<CharacterPage, DataError.Network> {
+        val pageNumber = page ?: FIRST_PAGE
         val species = filters.species?.toQueryValue()
         val result = safeCall(errorReporter) {
             api.getCharacters(
-                page = page,
+                page = pageNumber,
                 name = filters.name.ifBlank { null },
                 status = filters.status?.toQueryValue(),
                 species = species,
@@ -65,9 +37,7 @@ internal class NetworkCharacterRepository(
         }
         return when (result) {
             is Result.Success -> {
-                val characterPage = result.data.toCharacterPage(page).keepOnlySpecies(species)
-                characterPage.characters.forEach { cachedCharacters[it.id] = it }
-                Result.Success(characterPage)
+                Result.Success(result.data.toCharacterPage(pageNumber).keepOnlySpecies(species))
             }
             is Result.Failure -> when (result.error) {
                 DataError.Network.NOT_FOUND -> Result.Success(EMPTY_PAGE)
@@ -75,6 +45,9 @@ internal class NetworkCharacterRepository(
             }
         }
     }
+
+    override suspend fun getCharacter(id: Int): Result<Character, DataError.Network> =
+        safeCall(errorReporter) { api.getCharacter(id) }.map { it.toCharacter() }
 
     private fun CharacterPage.keepOnlySpecies(species: String?): CharacterPage =
         if (species == null) {
@@ -84,6 +57,7 @@ internal class NetworkCharacterRepository(
         }
 
     private companion object {
+        const val FIRST_PAGE = 1
         const val NO_CACHE = "no-cache"
         val EMPTY_PAGE = CharacterPage(characters = emptyList(), nextPage = null)
     }

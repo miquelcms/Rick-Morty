@@ -1,4 +1,4 @@
-package com.miquelcms.rickmorty.feature.characters.data.repository
+package com.miquelcms.rickmorty.feature.characters.data.remote
 
 import com.miquelcms.rickmorty.core.domain.DataError
 import com.miquelcms.rickmorty.core.domain.Result
@@ -20,15 +20,15 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.create
 
-class NetworkCharacterRepositoryTest {
+class RetrofitCharacterRemoteDataSourceTest {
 
     private val server = MockWebServer()
-    private lateinit var repository: NetworkCharacterRepository
+    private lateinit var dataSource: RetrofitCharacterRemoteDataSource
 
     @Before
     fun setUp() {
         server.start()
-        repository = NetworkCharacterRepository(
+        dataSource = RetrofitCharacterRemoteDataSource(
             api = server.createRetrofit().create(),
             errorReporter = FakeErrorReporter(),
         )
@@ -43,9 +43,19 @@ class NetworkCharacterRepositoryTest {
     fun `maps a page of characters`() = runTest {
         server.enqueue(MockResponse.Builder().body(PAGE_JSON).build())
 
-        val result = repository.getCharacters(1, CharacterFilters(), forceRefresh = false)
+        val result = dataSource.getCharacters(1, CharacterFilters(), forceRefresh = false)
 
         assertEquals(Result.Success(CharacterPage(listOf(RICK), nextPage = 2)), result)
+    }
+
+    @Test
+    fun `requests the first page when no page is given`() = runTest {
+        server.enqueue(MockResponse.Builder().body(PAGE_JSON).build())
+
+        val result = dataSource.getCharacters(null, CharacterFilters(), forceRefresh = false)
+
+        assertEquals(Result.Success(CharacterPage(listOf(RICK), nextPage = 2)), result)
+        assertEquals("/character?page=1", server.takeRequest().target)
     }
 
     @Test
@@ -58,7 +68,7 @@ class NetworkCharacterRepositoryTest {
             gender = CharacterGender.MALE,
         )
 
-        repository.getCharacters(2, filters, forceRefresh = false)
+        dataSource.getCharacters(2, filters, forceRefresh = false)
 
         val request = server.takeRequest()
         assertEquals(
@@ -70,36 +80,23 @@ class NetworkCharacterRepositoryTest {
 
     @Test
     fun `keeps only the characters of the requested species`() = runTest {
-        val pageJson = """{ "info": { "next": null }, "results": [$RICK_JSON, $HUMANOID_JSON] }"""
+        val humanoidJson = RICK_JSON
+            .replace("\"id\": 1", "\"id\": 2")
+            .replace("\"Human\"", "\"Humanoid\"")
+        val pageJson = """{ "info": { "next": null }, "results": [$RICK_JSON, $humanoidJson] }"""
         server.enqueue(MockResponse.Builder().body(pageJson).build())
         val filters = CharacterFilters(species = CharacterSpecies.HUMAN)
 
-        val result = repository.getCharacters(1, filters, forceRefresh = false)
+        val result = dataSource.getCharacters(1, filters, forceRefresh = false)
 
         assertEquals(Result.Success(CharacterPage(listOf(RICK), nextPage = null)), result)
-    }
-
-    @Test
-    fun `skips the pages that the species filter leaves empty`() = runTest {
-        val nextUrl = "https://rickandmortyapi.com/api/character?page=2"
-        val humanoidsPage = """{ "info": { "next": "$nextUrl" }, "results": [$HUMANOID_JSON] }"""
-        val humansPage = """{ "info": { "next": null }, "results": [$RICK_JSON] }"""
-        server.enqueue(MockResponse.Builder().body(humanoidsPage).build())
-        server.enqueue(MockResponse.Builder().body(humansPage).build())
-        val filters = CharacterFilters(species = CharacterSpecies.HUMAN)
-
-        val result = repository.getCharacters(1, filters, forceRefresh = false)
-
-        assertEquals(Result.Success(CharacterPage(listOf(RICK), nextPage = null)), result)
-        assertEquals("/character?page=1&species=Human", server.takeRequest().target)
-        assertEquals("/character?page=2&species=Human", server.takeRequest().target)
     }
 
     @Test
     fun `asks the server to skip the cache when forcing a refresh`() = runTest {
         server.enqueue(MockResponse.Builder().body(PAGE_JSON).build())
 
-        repository.getCharacters(1, CharacterFilters(), forceRefresh = true)
+        dataSource.getCharacters(1, CharacterFilters(), forceRefresh = true)
 
         assertEquals("no-cache", server.takeRequest().headers["Cache-Control"])
     }
@@ -109,7 +106,7 @@ class NetworkCharacterRepositoryTest {
         server.enqueue(MockResponse.Builder().code(404).body(NOTHING_JSON).build())
         val filters = CharacterFilters(name = "zzz")
 
-        val result = repository.getCharacters(1, filters, forceRefresh = false)
+        val result = dataSource.getCharacters(1, filters, forceRefresh = false)
 
         assertEquals(Result.Success(CharacterPage(emptyList(), nextPage = null)), result)
     }
@@ -118,27 +115,16 @@ class NetworkCharacterRepositoryTest {
     fun `returns the error when the page request fails`() = runTest {
         server.enqueue(MockResponse.Builder().code(500).build())
 
-        val result = repository.getCharacters(1, CharacterFilters(), forceRefresh = false)
+        val result = dataSource.getCharacters(1, CharacterFilters(), forceRefresh = false)
 
         assertEquals(Result.Failure(DataError.Network.SERVER_ERROR), result)
     }
 
     @Test
-    fun `returns a character already loaded in a page without calling the api`() = runTest {
-        server.enqueue(MockResponse.Builder().body(PAGE_JSON).build())
-        repository.getCharacters(1, CharacterFilters(), forceRefresh = false)
-
-        val result = repository.getCharacter(1)
-
-        assertEquals(Result.Success(RICK), result)
-        assertEquals(1, server.requestCount)
-    }
-
-    @Test
-    fun `requests a character that is not cached`() = runTest {
+    fun `requests a character by its id`() = runTest {
         server.enqueue(MockResponse.Builder().body(RICK_JSON).build())
 
-        val result = repository.getCharacter(1)
+        val result = dataSource.getCharacter(1)
 
         assertEquals(Result.Success(RICK), result)
         assertEquals("/character/1", server.takeRequest().target)
@@ -191,9 +177,5 @@ class NetworkCharacterRepositoryTest {
         """
 
         const val NOTHING_JSON = """{"error":"There is nothing here"}"""
-
-        val HUMANOID_JSON = RICK_JSON
-            .replace("\"id\": 1", "\"id\": 2")
-            .replace("\"Human\"", "\"Humanoid\"")
     }
 }

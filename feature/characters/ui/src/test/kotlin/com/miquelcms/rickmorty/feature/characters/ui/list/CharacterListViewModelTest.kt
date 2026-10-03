@@ -46,7 +46,7 @@ class CharacterListViewModelTest {
 
     @Test
     fun `loads the first page when it starts`() {
-        repository.pageResults[1] = Result.Success(firstPage)
+        repository.firstPageResult = Result.Success(firstPage)
 
         val viewModel = createViewModel()
 
@@ -57,7 +57,7 @@ class CharacterListViewModelTest {
             ),
             viewModel.state.value,
         )
-        assertEquals(listOf(PageRequest(1, CharacterFilters(), false)), repository.pageRequests)
+        assertEquals(listOf(PageRequest(null, CharacterFilters(), false)), repository.pageRequests)
     }
 
     @Test
@@ -70,7 +70,7 @@ class CharacterListViewModelTest {
 
     @Test
     fun `shows an error when the first page fails`() {
-        repository.pageResults[1] = Result.Failure(DataError.Network.NO_INTERNET)
+        repository.firstPageResult = Result.Failure(DataError.Network.NO_INTERNET)
 
         val viewModel = createViewModel()
 
@@ -82,9 +82,9 @@ class CharacterListViewModelTest {
 
     @Test
     fun `retry loads the first page again after an error`() {
-        repository.pageResults[1] = Result.Failure(DataError.Network.NO_INTERNET)
+        repository.firstPageResult = Result.Failure(DataError.Network.NO_INTERNET)
         val viewModel = createViewModel()
-        repository.pageResults[1] = Result.Success(firstPage)
+        repository.firstPageResult = Result.Success(firstPage)
 
         viewModel.onAction(CharacterListAction.OnRetryClick)
 
@@ -94,8 +94,8 @@ class CharacterListViewModelTest {
 
     @Test
     fun `loading the next page adds its characters to the list`() {
-        repository.pageResults[1] = Result.Success(firstPage)
-        repository.pageResults[2] = Result.Success(secondPage)
+        repository.firstPageResult = Result.Success(firstPage)
+        repository.nextPageResults[2] = Result.Success(secondPage)
         val viewModel = createViewModel()
 
         viewModel.onAction(CharacterListAction.OnLoadNextPage)
@@ -104,36 +104,36 @@ class CharacterListViewModelTest {
             listOf(characterUi(1), characterUi(2), characterUi(3)),
             viewModel.state.value.characters,
         )
-        assertEquals(listOf(1, 2), repository.pageRequests.map { it.page })
+        assertEquals(listOf(null, 2), repository.pageRequests.map { it.page })
     }
 
     @Test
     fun `requests the page that the repository says is next`() {
-        repository.pageResults[1] = Result.Success(firstPage.copy(nextPage = 3))
-        repository.pageResults[3] = Result.Success(secondPage)
+        repository.firstPageResult = Result.Success(firstPage.copy(nextPage = 3))
+        repository.nextPageResults[3] = Result.Success(secondPage)
         val viewModel = createViewModel()
 
         viewModel.onAction(CharacterListAction.OnLoadNextPage)
 
-        assertEquals(listOf(1, 3), repository.pageRequests.map { it.page })
+        assertEquals(listOf(null, 3), repository.pageRequests.map { it.page })
     }
 
     @Test
     fun `does not request more pages after the last one`() {
-        repository.pageResults[1] = Result.Success(firstPage)
-        repository.pageResults[2] = Result.Success(secondPage)
+        repository.firstPageResult = Result.Success(firstPage)
+        repository.nextPageResults[2] = Result.Success(secondPage)
         val viewModel = createViewModel()
         viewModel.onAction(CharacterListAction.OnLoadNextPage)
 
         viewModel.onAction(CharacterListAction.OnLoadNextPage)
 
-        assertEquals(listOf(1, 2), repository.pageRequests.map { it.page })
+        assertEquals(listOf(null, 2), repository.pageRequests.map { it.page })
     }
 
     @Test
     fun `a failed next page keeps the list and waits for a retry`() {
-        repository.pageResults[1] = Result.Success(firstPage)
-        repository.pageResults[2] = Result.Failure(DataError.Network.SERVER_ERROR)
+        repository.firstPageResult = Result.Success(firstPage)
+        repository.nextPageResults[2] = Result.Failure(DataError.Network.SERVER_ERROR)
         val viewModel = createViewModel()
 
         viewModel.onAction(CharacterListAction.OnLoadNextPage)
@@ -144,16 +144,16 @@ class CharacterListViewModelTest {
             DataError.Network.SERVER_ERROR.toUiText(),
             viewModel.state.value.nextPageError,
         )
-        assertEquals(listOf(1, 2), repository.pageRequests.map { it.page })
+        assertEquals(listOf(null, 2), repository.pageRequests.map { it.page })
     }
 
     @Test
     fun `retry loads the failed next page`() {
-        repository.pageResults[1] = Result.Success(firstPage)
-        repository.pageResults[2] = Result.Failure(DataError.Network.SERVER_ERROR)
+        repository.firstPageResult = Result.Success(firstPage)
+        repository.nextPageResults[2] = Result.Failure(DataError.Network.SERVER_ERROR)
         val viewModel = createViewModel()
         viewModel.onAction(CharacterListAction.OnLoadNextPage)
-        repository.pageResults[2] = Result.Success(secondPage)
+        repository.nextPageResults[2] = Result.Success(secondPage)
 
         viewModel.onAction(CharacterListAction.OnRetryClick)
 
@@ -166,7 +166,7 @@ class CharacterListViewModelTest {
 
     @Test
     fun `searches by name only after the user stops typing`() = runTest {
-        repository.pageResults[1] = Result.Success(firstPage)
+        repository.firstPageResult = Result.Success(firstPage)
         val viewModel = createViewModel()
 
         viewModel.onAction(CharacterListAction.OnQueryChange("ri"))
@@ -176,7 +176,7 @@ class CharacterListViewModelTest {
         assertEquals(1, repository.pageRequests.size)
         advanceTimeBy(2)
 
-        val expected = PageRequest(1, CharacterFilters(name = "rick"), false)
+        val expected = PageRequest(null, CharacterFilters(name = "rick"), false)
         assertEquals(expected, repository.pageRequests.last())
         assertEquals(2, repository.pageRequests.size)
         assertEquals("rick", viewModel.state.value.query)
@@ -188,7 +188,7 @@ class CharacterListViewModelTest {
 
     @Test
     fun `applying filters reloads the first page with them`() {
-        repository.pageResults[1] = Result.Success(firstPage)
+        repository.firstPageResult = Result.Success(firstPage)
         val viewModel = createViewModel()
         val filters = CharacterFiltersUi(
             status = CharacterStatusUi.DEAD,
@@ -203,7 +203,7 @@ class CharacterListViewModelTest {
             gender = CharacterGender.FEMALE,
             species = CharacterSpecies.HUMAN,
         )
-        assertEquals(PageRequest(1, expectedFilters, false), repository.pageRequests.last())
+        assertEquals(PageRequest(null, expectedFilters, false), repository.pageRequests.last())
         assertEquals(filters, viewModel.state.value.filters)
         assertEquals(
             AnalyticsEvent(
@@ -216,7 +216,7 @@ class CharacterListViewModelTest {
 
     @Test
     fun `clearing the search removes the query and the filters`() {
-        repository.pageResults[1] = Result.Success(firstPage)
+        repository.firstPageResult = Result.Success(firstPage)
         val savedStateHandle = SavedStateHandle(mapOf("query" to "rick", "status" to "DEAD"))
         val viewModel = createViewModel(savedStateHandle)
 
@@ -224,29 +224,29 @@ class CharacterListViewModelTest {
 
         assertEquals("", viewModel.state.value.query)
         assertEquals(CharacterFiltersUi(), viewModel.state.value.filters)
-        assertEquals(PageRequest(1, CharacterFilters(), false), repository.pageRequests.last())
+        assertEquals(PageRequest(null, CharacterFilters(), false), repository.pageRequests.last())
     }
 
     @Test
     fun `refreshing skips the cache and replaces the list`() {
-        repository.pageResults[1] = Result.Success(firstPage)
-        repository.pageResults[2] = Result.Success(secondPage)
+        repository.firstPageResult = Result.Success(firstPage)
+        repository.nextPageResults[2] = Result.Success(secondPage)
         val viewModel = createViewModel()
         viewModel.onAction(CharacterListAction.OnLoadNextPage)
 
         viewModel.onAction(CharacterListAction.OnRefresh)
 
-        assertEquals(PageRequest(1, CharacterFilters(), true), repository.pageRequests.last())
+        assertEquals(PageRequest(null, CharacterFilters(), true), repository.pageRequests.last())
         assertEquals(listOf(characterUi(1), characterUi(2)), viewModel.state.value.characters)
         assertEquals(false, viewModel.state.value.isRefreshing)
     }
 
     @Test
     fun `a failed refresh keeps the list and shows a message`() = runTest {
-        repository.pageResults[1] = Result.Success(firstPage)
+        repository.firstPageResult = Result.Success(firstPage)
         val viewModel = createViewModel()
         val events = collectEvents(viewModel)
-        repository.pageResults[1] = Result.Failure(DataError.Network.NO_INTERNET)
+        repository.firstPageResult = Result.Failure(DataError.Network.NO_INTERNET)
 
         viewModel.onAction(CharacterListAction.OnRefresh)
 
@@ -260,7 +260,7 @@ class CharacterListViewModelTest {
 
     @Test
     fun `opening a character navigates to its detail and tracks it`() = runTest {
-        repository.pageResults[1] = Result.Success(firstPage)
+        repository.firstPageResult = Result.Success(firstPage)
         val viewModel = createViewModel()
         val events = collectEvents(viewModel)
 
@@ -275,7 +275,7 @@ class CharacterListViewModelTest {
 
     @Test
     fun `restores the query and the filters after process death`() {
-        repository.pageResults[1] = Result.Success(firstPage)
+        repository.firstPageResult = Result.Success(firstPage)
         val savedStateHandle = SavedStateHandle(
             mapOf("query" to "rick", "status" to "ALIVE", "gender" to "MALE", "species" to "ROBOT"),
         )
