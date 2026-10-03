@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.miquelcms.rickmorty.core.designsystem.theme.RickMortyTheme
 import com.miquelcms.rickmorty.core.domain.theme.ThemeMode
-import com.miquelcms.rickmorty.feature.characters.ui.list.CharacterListRoot
+import com.miquelcms.rickmorty.navigation.RickMortyNavigation
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
@@ -29,12 +29,11 @@ class MainActivity : ComponentActivity() {
                 val isDarkTheme = state.themeMode.isDarkTheme()
                 SystemBarsTheme(isDarkTheme)
                 RickMortyTheme(darkTheme = isDarkTheme) {
-                    CharacterListRoot(
+                    RickMortyNavigation(
                         isDarkTheme = isDarkTheme,
                         onToggleTheme = {
                             viewModel.onAction(MainAction.OnDarkThemeChange(!isDarkTheme))
                         },
-                        onNavigateToDetail = {},
                     )
                 }
             }

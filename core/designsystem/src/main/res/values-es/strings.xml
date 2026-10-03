@@ -3,4 +3,5 @@
     <string name="theme_toggle_to_dark">Cambiar a tema oscuro</string>
     <string name="theme_toggle_to_light">Cambiar a tema claro</string>
     <string name="search_clear">Borrar búsqueda</string>
+    <string name="navigate_back">Atrás</string>
 </resources>

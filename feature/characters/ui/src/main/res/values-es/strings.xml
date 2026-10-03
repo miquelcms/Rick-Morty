@@ -34,4 +34,5 @@
     <string name="character_species_cronenberg">Cronenberg</string>
     <string name="character_species_disease">Enfermedad</string>
     <string name="character_species_unknown">Desconocida</string>
+    <string name="character_detail_title">Personaje</string>
 </resources>
