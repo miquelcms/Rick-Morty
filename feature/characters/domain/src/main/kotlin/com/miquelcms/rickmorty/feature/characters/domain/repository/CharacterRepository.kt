@@ -1,4 +1,4 @@
-package com.miquelcms.rickmorty.feature.characters.domain
+package com.miquelcms.rickmorty.feature.characters.domain.repository
 
 import com.miquelcms.rickmorty.core.domain.DataError
 import com.miquelcms.rickmorty.core.domain.Result

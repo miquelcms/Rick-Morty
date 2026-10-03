@@ -1,4 +1,4 @@
-package com.miquelcms.rickmorty.feature.characters.domain
+package com.miquelcms.rickmorty.feature.characters.domain.usecase
 
 import com.miquelcms.rickmorty.core.domain.DataError
 import com.miquelcms.rickmorty.core.domain.Result
@@ -6,6 +6,8 @@ import com.miquelcms.rickmorty.feature.characters.domain.model.Character
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterGender
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterStatus
 import com.miquelcms.rickmorty.feature.characters.domain.model.Episode
+import com.miquelcms.rickmorty.feature.characters.domain.repository.FakeCharacterRepository
+import com.miquelcms.rickmorty.feature.characters.domain.repository.FakeEpisodeRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -15,7 +17,8 @@ class GetCharacterEpisodesUseCaseTest {
 
     private val characterRepository = FakeCharacterRepository()
     private val episodeRepository = FakeEpisodeRepository()
-    private val getCharacterEpisodes = GetCharacterEpisodesUseCase(characterRepository, episodeRepository)
+    private val getCharacterEpisodes =
+        GetCharacterEpisodesUseCase(characterRepository, episodeRepository)
 
     @Test
     fun `returns the episodes of the character`() = runTest {
