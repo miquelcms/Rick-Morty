@@ -7,4 +7,12 @@
     <string name="character_gender_male">Male</string>
     <string name="character_gender_genderless">Genderless</string>
     <string name="character_gender_unknown">Unknown</string>
+    <string name="character_list_title">Characters</string>
+    <string name="character_list_search_placeholder">Search by name</string>
+    <string name="character_list_error_title">Something went wrong</string>
+    <string name="character_list_empty_title">No characters found</string>
+    <string name="character_list_empty_description">Try another name or change the filters.</string>
+    <string name="character_list_clear_search">Clear search</string>
+    <string name="character_card_open">open the details</string>
+    <string name="action_retry">Try again</string>
 </resources>

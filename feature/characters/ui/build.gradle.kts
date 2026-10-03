@@ -15,7 +15,10 @@ dependencies {
     implementation(projects.core.analytics)
 
     implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.androidx.compose)
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(projects.core.testing)

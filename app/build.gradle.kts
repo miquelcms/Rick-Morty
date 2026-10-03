@@ -40,4 +40,5 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel)
     testImplementation(projects.core.testing)
+    testImplementation(libs.koin.test)
 }

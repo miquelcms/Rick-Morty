@@ -5,6 +5,7 @@ import com.miquelcms.rickmorty.core.analytics.di.coreAnalyticsModule
 import com.miquelcms.rickmorty.core.data.di.coreDataModule
 import com.miquelcms.rickmorty.di.appModule
 import com.miquelcms.rickmorty.feature.characters.data.di.charactersDataModule
+import com.miquelcms.rickmorty.feature.characters.ui.di.charactersUiModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -19,6 +20,7 @@ class RickMortyApplication : Application() {
                 coreAnalyticsModule,
                 coreDataModule,
                 charactersDataModule,
+                charactersUiModule,
             )
         }
     }
