@@ -42,8 +42,7 @@ class CharacterListViewModel(
     private val _events = Channel<CharacterListEvent>()
     val events = _events.receiveAsFlow()
 
-    private var nextPage = FIRST_PAGE
-    private var hasNextPage = false
+    private var nextPage: Int? = null
     private var loadJob: Job? = null
     private var searchJob: Job? = null
 
@@ -121,8 +120,7 @@ class CharacterListViewModel(
                 filters = current.filters.toCharacterFilters(name = current.query),
                 forceRefresh = isRefresh,
             ).onSuccess { page ->
-                nextPage = FIRST_PAGE + 1
-                hasNextPage = page.hasNextPage
+                nextPage = page.nextPage
                 _state.update {
                     it.copy(
                         characters = page.characters.map { character -> character.toCharacterUi() },
@@ -151,21 +149,21 @@ class CharacterListViewModel(
         val current = state.value
         val isBusy = current.isLoading || current.isRefreshing || current.isLoadingNextPage
         val isWaitingForRetry = current.nextPageError != null && !isRetry
-        if (isBusy || isWaitingForRetry || !hasNextPage) return
+        val pageToLoad = nextPage
+        if (isBusy || isWaitingForRetry || pageToLoad == null) return
 
         loadJob = viewModelScope.launch {
             _state.update { it.copy(isLoadingNextPage = true, nextPageError = null) }
             characterRepository.getCharacters(
-                page = nextPage,
+                page = pageToLoad,
                 filters = current.filters.toCharacterFilters(name = current.query),
                 forceRefresh = false,
             ).onSuccess { page ->
-                nextPage++
-                hasNextPage = page.hasNextPage
+                nextPage = page.nextPage
                 _state.update {
                     it.copy(
                         characters = it.characters +
-                            page.characters.map { character -> character.toCharacterUi() },
+                                page.characters.map { character -> character.toCharacterUi() },
                         isLoadingNextPage = false,
                     )
                 }

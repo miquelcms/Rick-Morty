@@ -27,6 +27,31 @@ internal class NetworkCharacterRepository(
         filters: CharacterFilters,
         forceRefresh: Boolean,
     ): Result<CharacterPage, DataError> {
+        var pageToLoad = page
+        while (true) {
+            val characterPage = when (val result = loadPage(pageToLoad, filters, forceRefresh)) {
+                is Result.Success -> result.data
+                is Result.Failure -> return result
+            }
+            val nextPage = characterPage.nextPage
+            if (characterPage.characters.isNotEmpty() || nextPage == null) {
+                return Result.Success(characterPage)
+            }
+            pageToLoad = nextPage
+        }
+    }
+
+    override suspend fun getCharacter(id: Int): Result<Character, DataError> {
+        cachedCharacters[id]?.let { return Result.Success(it) }
+        return safeCall(errorReporter) { api.getCharacter(id) }
+            .map { dto -> dto.toCharacter().also { cachedCharacters[it.id] = it } }
+    }
+
+    private suspend fun loadPage(
+        page: Int,
+        filters: CharacterFilters,
+        forceRefresh: Boolean,
+    ): Result<CharacterPage, DataError> {
         val species = filters.species?.toQueryValue()
         val result = safeCall(errorReporter) {
             api.getCharacters(
@@ -40,7 +65,7 @@ internal class NetworkCharacterRepository(
         }
         return when (result) {
             is Result.Success -> {
-                val characterPage = result.data.toCharacterPage().keepOnlySpecies(species)
+                val characterPage = result.data.toCharacterPage(page).keepOnlySpecies(species)
                 characterPage.characters.forEach { cachedCharacters[it.id] = it }
                 Result.Success(characterPage)
             }
@@ -49,12 +74,6 @@ internal class NetworkCharacterRepository(
                 else -> result
             }
         }
-    }
-
-    override suspend fun getCharacter(id: Int): Result<Character, DataError> {
-        cachedCharacters[id]?.let { return Result.Success(it) }
-        return safeCall(errorReporter) { api.getCharacter(id) }
-            .map { dto -> dto.toCharacter().also { cachedCharacters[it.id] = it } }
     }
 
     private fun CharacterPage.keepOnlySpecies(species: String?): CharacterPage =
@@ -66,6 +85,6 @@ internal class NetworkCharacterRepository(
 
     private companion object {
         const val NO_CACHE = "no-cache"
-        val EMPTY_PAGE = CharacterPage(characters = emptyList(), hasNextPage = false)
+        val EMPTY_PAGE = CharacterPage(characters = emptyList(), nextPage = null)
     }
 }

@@ -41,8 +41,8 @@ class CharacterListViewModelTest {
     private val repository = FakeCharacterRepository()
     private val analyticsTracker = FakeAnalyticsTracker()
 
-    private val firstPage = CharacterPage(listOf(character(1), character(2)), hasNextPage = true)
-    private val secondPage = CharacterPage(listOf(character(3)), hasNextPage = false)
+    private val firstPage = CharacterPage(listOf(character(1), character(2)), nextPage = 2)
+    private val secondPage = CharacterPage(listOf(character(3)), nextPage = null)
 
     @Test
     fun `loads the first page when it starts`() {
@@ -105,6 +105,17 @@ class CharacterListViewModelTest {
             viewModel.state.value.characters,
         )
         assertEquals(listOf(1, 2), repository.pageRequests.map { it.page })
+    }
+
+    @Test
+    fun `requests the page that the repository says is next`() {
+        repository.pageResults[1] = Result.Success(firstPage.copy(nextPage = 3))
+        repository.pageResults[3] = Result.Success(secondPage)
+        val viewModel = createViewModel()
+
+        viewModel.onAction(CharacterListAction.OnLoadNextPage)
+
+        assertEquals(listOf(1, 3), repository.pageRequests.map { it.page })
     }
 
     @Test

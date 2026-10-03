@@ -45,7 +45,7 @@ class NetworkCharacterRepositoryTest {
 
         val result = repository.getCharacters(1, CharacterFilters(), forceRefresh = false)
 
-        assertEquals(Result.Success(CharacterPage(listOf(RICK), hasNextPage = true)), result)
+        assertEquals(Result.Success(CharacterPage(listOf(RICK), nextPage = 2)), result)
     }
 
     @Test
@@ -70,16 +70,29 @@ class NetworkCharacterRepositoryTest {
 
     @Test
     fun `keeps only the characters of the requested species`() = runTest {
-        val humanoidJson = RICK_JSON
-            .replace("\"id\": 1", "\"id\": 2")
-            .replace("\"Human\"", "\"Humanoid\"")
-        val pageJson = """{ "info": { "next": null }, "results": [$RICK_JSON, $humanoidJson] }"""
+        val pageJson = """{ "info": { "next": null }, "results": [$RICK_JSON, $HUMANOID_JSON] }"""
         server.enqueue(MockResponse.Builder().body(pageJson).build())
         val filters = CharacterFilters(species = CharacterSpecies.HUMAN)
 
         val result = repository.getCharacters(1, filters, forceRefresh = false)
 
-        assertEquals(Result.Success(CharacterPage(listOf(RICK), hasNextPage = false)), result)
+        assertEquals(Result.Success(CharacterPage(listOf(RICK), nextPage = null)), result)
+    }
+
+    @Test
+    fun `skips the pages that the species filter leaves empty`() = runTest {
+        val nextUrl = "https://rickandmortyapi.com/api/character?page=2"
+        val humanoidsPage = """{ "info": { "next": "$nextUrl" }, "results": [$HUMANOID_JSON] }"""
+        val humansPage = """{ "info": { "next": null }, "results": [$RICK_JSON] }"""
+        server.enqueue(MockResponse.Builder().body(humanoidsPage).build())
+        server.enqueue(MockResponse.Builder().body(humansPage).build())
+        val filters = CharacterFilters(species = CharacterSpecies.HUMAN)
+
+        val result = repository.getCharacters(1, filters, forceRefresh = false)
+
+        assertEquals(Result.Success(CharacterPage(listOf(RICK), nextPage = null)), result)
+        assertEquals("/character?page=1&species=Human", server.takeRequest().target)
+        assertEquals("/character?page=2&species=Human", server.takeRequest().target)
     }
 
     @Test
@@ -98,7 +111,7 @@ class NetworkCharacterRepositoryTest {
 
         val result = repository.getCharacters(1, filters, forceRefresh = false)
 
-        assertEquals(Result.Success(CharacterPage(emptyList(), hasNextPage = false)), result)
+        assertEquals(Result.Success(CharacterPage(emptyList(), nextPage = null)), result)
     }
 
     @Test
@@ -178,5 +191,9 @@ class NetworkCharacterRepositoryTest {
         """
 
         const val NOTHING_JSON = """{"error":"There is nothing here"}"""
+
+        val HUMANOID_JSON = RICK_JSON
+            .replace("\"id\": 1", "\"id\": 2")
+            .replace("\"Human\"", "\"Humanoid\"")
     }
 }

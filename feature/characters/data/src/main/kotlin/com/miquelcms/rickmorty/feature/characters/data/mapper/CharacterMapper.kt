@@ -8,9 +8,9 @@ import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterPage
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterSpecies
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterStatus
 
-internal fun CharacterPageDto.toCharacterPage() = CharacterPage(
+internal fun CharacterPageDto.toCharacterPage(page: Int) = CharacterPage(
     characters = results.map { it.toCharacter() },
-    hasNextPage = info.next != null,
+    nextPage = if (info.next != null) page + 1 else null,
 )
 
 internal fun CharacterDto.toCharacter() = Character(
