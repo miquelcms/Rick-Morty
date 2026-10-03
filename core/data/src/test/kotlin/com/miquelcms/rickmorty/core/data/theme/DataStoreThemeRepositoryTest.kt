@@ -1,8 +1,8 @@
 package com.miquelcms.rickmorty.core.data.theme
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import com.miquelcms.rickmorty.core.data.FakeErrorReporter
 import com.miquelcms.rickmorty.core.domain.theme.ThemeMode
+import com.miquelcms.rickmorty.core.testing.FakeErrorReporter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest

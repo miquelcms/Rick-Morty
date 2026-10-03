@@ -1,8 +1,8 @@
 package com.miquelcms.rickmorty.core.data.network
 
-import com.miquelcms.rickmorty.core.data.FakeErrorReporter
 import com.miquelcms.rickmorty.core.domain.DataError
 import com.miquelcms.rickmorty.core.domain.Result
+import com.miquelcms.rickmorty.core.testing.FakeErrorReporter
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.SerializationException
@@ -98,4 +98,3 @@ class SafeCallTest {
     private fun httpException(code: Int) =
         HttpException(Response.error<String>(code, "".toResponseBody()))
 }
-

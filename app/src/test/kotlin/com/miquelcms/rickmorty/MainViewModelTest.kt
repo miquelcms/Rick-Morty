@@ -1,34 +1,29 @@
 package com.miquelcms.rickmorty
 
 import com.miquelcms.rickmorty.core.domain.theme.ThemeMode
-import kotlinx.coroutines.Dispatchers
+import com.miquelcms.rickmorty.core.testing.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     private val themeRepository = FakeThemeRepository(initialThemeMode = ThemeMode.DARK)
     private lateinit var viewModel: MainViewModel
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
         viewModel = MainViewModel(themeRepository)
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
     }
 
     @Test
@@ -40,7 +35,10 @@ class MainViewModelTest {
     fun `state contains the stored theme mode`() = runTest {
         collectState()
 
-        assertEquals(MainState(isLoading = false, themeMode = ThemeMode.DARK), viewModel.state.value)
+        assertEquals(
+            MainState(isLoading = false, themeMode = ThemeMode.DARK),
+            viewModel.state.value,
+        )
     }
 
     @Test
@@ -49,7 +47,10 @@ class MainViewModelTest {
 
         viewModel.onAction(MainAction.OnDarkThemeChange(isDarkTheme = false))
 
-        assertEquals(MainState(isLoading = false, themeMode = ThemeMode.LIGHT), viewModel.state.value)
+        assertEquals(
+            MainState(isLoading = false, themeMode = ThemeMode.LIGHT),
+            viewModel.state.value,
+        )
     }
 
     @Test

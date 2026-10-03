@@ -1,4 +1,4 @@
-package com.miquelcms.rickmorty.feature.characters.data
+package com.miquelcms.rickmorty.core.testing
 
 import kotlinx.serialization.json.Json
 import mockwebserver3.MockWebServer
@@ -8,7 +8,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 private val json = Json { ignoreUnknownKeys = true }
 
-internal fun MockWebServer.createRetrofit(): Retrofit =
+fun MockWebServer.createRetrofit(): Retrofit =
     Retrofit.Builder()
         .baseUrl(url("/"))
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))

@@ -1,4 +1,4 @@
-package com.miquelcms.rickmorty.feature.characters.data
+package com.miquelcms.rickmorty.core.testing
 
 import com.miquelcms.rickmorty.core.analytics.ErrorReporter
 

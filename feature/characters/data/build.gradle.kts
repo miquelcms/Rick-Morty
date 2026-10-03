@@ -17,8 +17,5 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.kotlinx.serialization.json)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.okhttp.mockwebserver)
-    testImplementation(libs.retrofit.converter.kotlinx.serialization)
+    testImplementation(projects.core.testing)
 }

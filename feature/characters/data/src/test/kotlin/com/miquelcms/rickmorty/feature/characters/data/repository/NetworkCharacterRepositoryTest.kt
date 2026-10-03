@@ -2,8 +2,8 @@ package com.miquelcms.rickmorty.feature.characters.data.repository
 
 import com.miquelcms.rickmorty.core.domain.DataError
 import com.miquelcms.rickmorty.core.domain.Result
-import com.miquelcms.rickmorty.feature.characters.data.FakeErrorReporter
-import com.miquelcms.rickmorty.feature.characters.data.createRetrofit
+import com.miquelcms.rickmorty.core.testing.FakeErrorReporter
+import com.miquelcms.rickmorty.core.testing.createRetrofit
 import com.miquelcms.rickmorty.feature.characters.domain.model.Character
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterFilters
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterGender

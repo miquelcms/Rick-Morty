@@ -1,8 +1,8 @@
 package com.miquelcms.rickmorty.feature.characters.data.repository
 
 import com.miquelcms.rickmorty.core.domain.Result
-import com.miquelcms.rickmorty.feature.characters.data.FakeErrorReporter
-import com.miquelcms.rickmorty.feature.characters.data.createRetrofit
+import com.miquelcms.rickmorty.core.testing.FakeErrorReporter
+import com.miquelcms.rickmorty.core.testing.createRetrofit
 import com.miquelcms.rickmorty.feature.characters.domain.model.Episode
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
