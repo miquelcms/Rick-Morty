@@ -13,6 +13,8 @@
     <string name="character_list_empty_title">No characters found</string>
     <string name="character_list_empty_description">Try another name or change the filters.</string>
     <string name="character_list_clear_search">Clear search</string>
+    <string name="character_list_offline">No connection.</string>
+    <string name="character_list_offline_saved_data">No connection. Showing saved data.</string>
     <string name="character_card_open">open the details</string>
     <string name="action_retry">Try again</string>
     <string name="character_filters_title">Filters</string>

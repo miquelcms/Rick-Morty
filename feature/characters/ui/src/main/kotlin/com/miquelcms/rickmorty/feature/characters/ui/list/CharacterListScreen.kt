@@ -1,5 +1,6 @@
 package com.miquelcms.rickmorty.feature.characters.ui.list
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.miquelcms.rickmorty.core.designsystem.component.RmBanner
 import com.miquelcms.rickmorty.core.designsystem.component.RmIconButton
 import com.miquelcms.rickmorty.core.designsystem.component.RmMessage
 import com.miquelcms.rickmorty.core.designsystem.component.RmPullToRefreshBox
@@ -102,6 +104,9 @@ fun CharacterListScreen(
                     onQueryChange = { onAction(CharacterListAction.OnQueryChange(it)) },
                     placeholder = stringResource(R.string.character_list_search_placeholder),
                 )
+                AnimatedVisibility(visible = state.isOffline) {
+                    RmBanner(text = offlineMessage(hasCharacters = state.characters.isNotEmpty()))
+                }
             }
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -155,13 +160,20 @@ fun CharacterListScreen(
 }
 
 @Composable
+private fun offlineMessage(hasCharacters: Boolean): String =
+    if (hasCharacters) {
+        stringResource(R.string.character_list_offline_saved_data)
+    } else {
+        stringResource(R.string.character_list_offline)
+    }
+
+@Composable
 private fun filtersDescription(activeCount: Int): String =
     if (activeCount == 0) {
         stringResource(R.string.character_filters_title)
     } else {
         stringResource(R.string.character_filters_open, activeCount)
     }
-
 
 @Composable
 private fun CenteredMessage(content: @Composable () -> Unit) {
@@ -187,6 +199,26 @@ private fun CharacterListScreenPreview() {
                     CharacterUi(3, "Birdperson", "", CharacterStatusUi.DEAD),
                     CharacterUi(4, "Abradolf Lincler", "", CharacterStatusUi.UNKNOWN),
                 ),
+                isLoading = false,
+            ),
+            onAction = {},
+            isDarkTheme = false,
+            onToggleTheme = {},
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun CharacterListScreenOfflinePreview() {
+    RickMortyTheme {
+        CharacterListScreen(
+            state = CharacterListState(
+                characters = listOf(
+                    CharacterUi(1, "Rick Sanchez", "", CharacterStatusUi.ALIVE),
+                    CharacterUi(2, "Morty Smith", "", CharacterStatusUi.ALIVE),
+                ),
+                isOffline = true,
                 isLoading = false,
             ),
             onAction = {},

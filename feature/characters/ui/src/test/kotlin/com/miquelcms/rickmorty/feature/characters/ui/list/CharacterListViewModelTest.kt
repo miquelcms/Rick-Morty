@@ -5,6 +5,7 @@ import com.miquelcms.rickmorty.core.analytics.AnalyticsEvent
 import com.miquelcms.rickmorty.core.domain.DataError
 import com.miquelcms.rickmorty.core.domain.Result
 import com.miquelcms.rickmorty.core.testing.FakeAnalyticsTracker
+import com.miquelcms.rickmorty.core.testing.FakeNetworkMonitor
 import com.miquelcms.rickmorty.core.testing.MainDispatcherRule
 import com.miquelcms.rickmorty.core.ui.toUiText
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterFilters
@@ -39,6 +40,7 @@ class CharacterListViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val repository = FakeCharacterRepository()
+    private val networkMonitor = FakeNetworkMonitor()
     private val analyticsTracker = FakeAnalyticsTracker()
 
     private val firstPage = CharacterPage(listOf(character(1), character(2)), nextPage = 2)
@@ -274,6 +276,19 @@ class CharacterListViewModelTest {
     }
 
     @Test
+    fun `shows the offline notice only while there is no connection`() {
+        repository.firstPageResult = Result.Success(firstPage)
+        val viewModel = createViewModel()
+        assertEquals(false, viewModel.state.value.isOffline)
+
+        networkMonitor.isOnline.value = false
+        assertEquals(true, viewModel.state.value.isOffline)
+
+        networkMonitor.isOnline.value = true
+        assertEquals(false, viewModel.state.value.isOffline)
+    }
+
+    @Test
     fun `restores the query and the filters after process death`() {
         repository.firstPageResult = Result.Success(firstPage)
         val savedStateHandle = SavedStateHandle(
@@ -293,7 +308,7 @@ class CharacterListViewModelTest {
     }
 
     private fun createViewModel(savedStateHandle: SavedStateHandle = SavedStateHandle()) =
-        CharacterListViewModel(repository, analyticsTracker, savedStateHandle)
+        CharacterListViewModel(repository, networkMonitor, analyticsTracker, savedStateHandle)
 
     private fun TestScope.collectEvents(
         viewModel: CharacterListViewModel,

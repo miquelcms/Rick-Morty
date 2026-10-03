@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.miquelcms.rickmorty.core.analytics.AnalyticsTracker
+import com.miquelcms.rickmorty.core.domain.network.NetworkMonitor
 import com.miquelcms.rickmorty.core.domain.onFailure
 import com.miquelcms.rickmorty.core.domain.onSuccess
 import com.miquelcms.rickmorty.core.ui.toUiText
@@ -20,6 +21,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -27,6 +30,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class CharacterListViewModel(
     private val characterRepository: CharacterRepository,
+    private val networkMonitor: NetworkMonitor,
     private val analyticsTracker: AnalyticsTracker,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -50,6 +54,7 @@ class CharacterListViewModel(
         analyticsTracker.track(
             CharactersAnalytics.screenView(CharactersAnalytics.SCREEN_CHARACTER_LIST),
         )
+        observeConnection()
         loadFirstPage()
     }
 
@@ -63,6 +68,12 @@ class CharacterListViewModel(
             CharacterListAction.OnRetryClick -> retry()
             is CharacterListAction.OnCharacterClick -> openCharacter(action.characterId)
         }
+    }
+
+    private fun observeConnection() {
+        networkMonitor.isOnline
+            .onEach { isOnline -> _state.update { it.copy(isOffline = !isOnline) } }
+            .launchIn(viewModelScope)
     }
 
     private fun changeQuery(query: String) {

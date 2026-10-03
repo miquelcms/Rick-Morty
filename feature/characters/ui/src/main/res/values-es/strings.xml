@@ -13,6 +13,8 @@
     <string name="character_list_empty_title">No hay personajes</string>
     <string name="character_list_empty_description">Prueba con otro nombre o cambia los filtros.</string>
     <string name="character_list_clear_search">Borrar búsqueda</string>
+    <string name="character_list_offline">Sin conexión.</string>
+    <string name="character_list_offline_saved_data">Sin conexión. Mostrando datos guardados.</string>
     <string name="character_card_open">abrir el detalle</string>
     <string name="action_retry">Reintentar</string>
     <string name="character_filters_title">Filtros</string>

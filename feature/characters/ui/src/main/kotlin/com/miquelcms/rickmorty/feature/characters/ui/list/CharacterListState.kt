@@ -8,6 +8,7 @@ data class CharacterListState(
     val query: String = "",
     val filters: CharacterFiltersUi = CharacterFiltersUi(),
     val characters: List<CharacterUi> = emptyList(),
+    val isOffline: Boolean = false,
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
     val isLoadingNextPage: Boolean = false,

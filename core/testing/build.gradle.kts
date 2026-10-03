@@ -8,6 +8,7 @@ android {
 
 dependencies {
     api(projects.core.analytics)
+    api(projects.core.domain)
 
     api(libs.junit)
     api(libs.kotlinx.coroutines.test)
