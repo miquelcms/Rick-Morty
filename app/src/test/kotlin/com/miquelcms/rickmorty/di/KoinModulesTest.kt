@@ -26,6 +26,8 @@ class KoinModulesTest {
             )
         }
 
-        allModules.verify(extraTypes = listOf(Context::class, SavedStateHandle::class))
+        allModules.verify(
+            extraTypes = listOf(Context::class, SavedStateHandle::class, Int::class),
+        )
     }
 }

@@ -5,17 +5,38 @@ import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterFilters
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterGender
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterSpecies
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterStatus
+import com.miquelcms.rickmorty.feature.characters.domain.model.Episode
+import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterDetailUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterFiltersUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterGenderUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterSpeciesUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterStatusUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterUi
+import com.miquelcms.rickmorty.feature.characters.ui.model.EpisodeUi
 
 internal fun Character.toCharacterUi() = CharacterUi(
     id = id,
     name = name,
     imageUrl = imageUrl,
     status = status.toCharacterStatusUi(),
+)
+
+internal fun Character.toCharacterDetailUi() = CharacterDetailUi(
+    id = id,
+    name = name,
+    imageUrl = imageUrl,
+    status = status.toCharacterStatusUi(),
+    species = species,
+    type = type.ifBlank { null },
+    gender = gender.toCharacterGenderUi(),
+    originName = originName,
+    locationName = locationName,
+)
+
+internal fun Episode.toEpisodeUi() = EpisodeUi(
+    id = id,
+    name = name,
+    code = code,
 )
 
 internal fun CharacterStatus.toCharacterStatusUi(): CharacterStatusUi =

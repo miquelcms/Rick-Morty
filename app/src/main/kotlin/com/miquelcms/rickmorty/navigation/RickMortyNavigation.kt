@@ -34,8 +34,11 @@ fun RickMortyNavigation(
                     onNavigateToDetail = { backStack.openCharacterDetail(it) },
                 )
             }
-            entry<CharacterDetailKey> {
-                CharacterDetailRoot(onBack = { backStack.goBack() })
+            entry<CharacterDetailKey> { key ->
+                CharacterDetailRoot(
+                    characterId = key.characterId,
+                    onBack = { backStack.goBack() },
+                )
             }
         },
     )

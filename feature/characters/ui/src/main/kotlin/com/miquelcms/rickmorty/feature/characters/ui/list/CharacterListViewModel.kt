@@ -107,7 +107,6 @@ class CharacterListViewModel(
     }
 
     private fun openCharacter(characterId: Int) {
-        analyticsTracker.track(CharactersAnalytics.characterOpened(characterId))
         viewModelScope.launch {
             _events.send(CharacterListEvent.NavigateToDetail(characterId))
         }

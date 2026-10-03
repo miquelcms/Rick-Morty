@@ -30,4 +30,5 @@ internal object CharactersAnalytics {
     )
 
     const val SCREEN_CHARACTER_LIST = "character_list"
+    const val SCREEN_CHARACTER_DETAIL = "character_detail"
 }

@@ -6,6 +6,7 @@ import com.miquelcms.rickmorty.feature.characters.domain.model.Character
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterFilters
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterPage
 import com.miquelcms.rickmorty.feature.characters.domain.repository.CharacterRepository
+import kotlinx.coroutines.CompletableDeferred
 
 class FakeCharacterRepository : CharacterRepository {
 
@@ -18,7 +19,10 @@ class FakeCharacterRepository : CharacterRepository {
     var firstPageResult: Result<CharacterPage, DataError> =
         Result.Failure(DataError.Network.NOT_FOUND)
     val nextPageResults = mutableMapOf<Int, Result<CharacterPage, DataError>>()
+    var characterResult: Result<Character, DataError> = Result.Failure(DataError.Network.NOT_FOUND)
+    var pause: CompletableDeferred<Unit>? = null
     val pageRequests = mutableListOf<PageRequest>()
+    val requestedCharacterIds = mutableListOf<Int>()
 
     override suspend fun getCharacters(
         filters: CharacterFilters,
@@ -33,6 +37,9 @@ class FakeCharacterRepository : CharacterRepository {
         }
     }
 
-    override suspend fun getCharacter(id: Int): Result<Character, DataError> =
-        error("Not used in these tests")
+    override suspend fun getCharacter(id: Int): Result<Character, DataError> {
+        requestedCharacterIds += id
+        pause?.await()
+        return characterResult
+    }
 }

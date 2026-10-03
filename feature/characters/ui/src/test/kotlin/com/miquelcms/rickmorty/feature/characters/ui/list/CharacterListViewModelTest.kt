@@ -261,7 +261,7 @@ class CharacterListViewModelTest {
     }
 
     @Test
-    fun `opening a character navigates to its detail and tracks it`() = runTest {
+    fun `opening a character navigates to its detail`() = runTest {
         repository.firstPageResult = Result.Success(firstPage)
         val viewModel = createViewModel()
         val events = collectEvents(viewModel)
@@ -269,10 +269,6 @@ class CharacterListViewModelTest {
         viewModel.onAction(CharacterListAction.OnCharacterClick(characterId = 2))
 
         assertEquals(listOf(CharacterListEvent.NavigateToDetail(characterId = 2)), events)
-        assertEquals(
-            AnalyticsEvent("character_opened", mapOf("character_id" to "2")),
-            analyticsTracker.events.last(),
-        )
     }
 
     @Test
