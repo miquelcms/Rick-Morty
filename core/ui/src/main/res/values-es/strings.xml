@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_no_internet">Sin conexión a internet. Revísala e inténtalo de nuevo.</string>
+    <string name="error_request_timeout">La petición ha tardado demasiado. Inténtalo de nuevo.</string>
+    <string name="error_not_found">No hemos encontrado lo que buscabas.</string>
+    <string name="error_server">El servidor tiene problemas. Inténtalo más tarde.</string>
+    <string name="error_unknown">Algo ha ido mal. Inténtalo de nuevo.</string>
+</resources>
