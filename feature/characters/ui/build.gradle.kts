@@ -13,4 +13,10 @@ dependencies {
     implementation(projects.core.ui)
     implementation(projects.core.designsystem)
     implementation(projects.core.analytics)
+
+    implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+    implementation(libs.kotlinx.coroutines.core)
+
+    testImplementation(projects.core.testing)
 }

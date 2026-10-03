@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="character_status_alive">Vivo</string>
+    <string name="character_status_dead">Muerto</string>
+    <string name="character_status_unknown">Desconocido</string>
+    <string name="character_gender_female">Femenino</string>
+    <string name="character_gender_male">Masculino</string>
+    <string name="character_gender_genderless">Sin género</string>
+    <string name="character_gender_unknown">Desconocido</string>
+</resources>
