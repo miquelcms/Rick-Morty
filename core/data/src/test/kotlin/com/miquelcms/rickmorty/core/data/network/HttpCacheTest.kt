@@ -23,7 +23,7 @@ class HttpCacheTest {
     @Before
     fun setUp() {
         server.start()
-        client = createOkHttpClient(temporaryFolder.root)
+        client = createOkHttpClient(temporaryFolder.root, loggingEnabled = false)
     }
 
     @After

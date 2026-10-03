@@ -4,6 +4,10 @@ plugins {
 
 android {
     namespace = "com.miquelcms.rickmorty.core.data"
+
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
@@ -14,6 +18,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
     api(libs.retrofit)
     implementation(libs.retrofit.converter.kotlinx.serialization)
 
