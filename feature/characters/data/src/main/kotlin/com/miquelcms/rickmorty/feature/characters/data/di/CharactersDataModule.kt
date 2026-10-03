@@ -1,7 +1,7 @@
 package com.miquelcms.rickmorty.feature.characters.data.di
 
-import com.miquelcms.rickmorty.feature.characters.data.remote.CharacterApi
-import com.miquelcms.rickmorty.feature.characters.data.remote.EpisodeApi
+import com.miquelcms.rickmorty.feature.characters.data.remote.api.CharacterApi
+import com.miquelcms.rickmorty.feature.characters.data.remote.api.EpisodeApi
 import com.miquelcms.rickmorty.feature.characters.data.repository.NetworkCharacterRepository
 import com.miquelcms.rickmorty.feature.characters.data.repository.NetworkEpisodeRepository
 import com.miquelcms.rickmorty.feature.characters.domain.repository.CharacterRepository

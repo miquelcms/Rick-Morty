@@ -6,7 +6,7 @@ import com.miquelcms.rickmorty.core.domain.DataError
 import com.miquelcms.rickmorty.core.domain.Result
 import com.miquelcms.rickmorty.core.domain.map
 import com.miquelcms.rickmorty.feature.characters.data.mapper.toEpisode
-import com.miquelcms.rickmorty.feature.characters.data.remote.EpisodeApi
+import com.miquelcms.rickmorty.feature.characters.data.remote.api.EpisodeApi
 import com.miquelcms.rickmorty.feature.characters.domain.model.Episode
 import com.miquelcms.rickmorty.feature.characters.domain.repository.EpisodeRepository
 

@@ -1,4 +1,4 @@
-package com.miquelcms.rickmorty.feature.characters.data.remote
+package com.miquelcms.rickmorty.feature.characters.data.remote.api
 
 import com.miquelcms.rickmorty.feature.characters.data.remote.dto.CharacterDto
 import com.miquelcms.rickmorty.feature.characters.data.remote.dto.CharacterPageDto

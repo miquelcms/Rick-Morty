@@ -8,7 +8,7 @@ import com.miquelcms.rickmorty.core.domain.map
 import com.miquelcms.rickmorty.feature.characters.data.mapper.toCharacter
 import com.miquelcms.rickmorty.feature.characters.data.mapper.toCharacterPage
 import com.miquelcms.rickmorty.feature.characters.data.mapper.toQueryValue
-import com.miquelcms.rickmorty.feature.characters.data.remote.CharacterApi
+import com.miquelcms.rickmorty.feature.characters.data.remote.api.CharacterApi
 import com.miquelcms.rickmorty.feature.characters.domain.model.Character
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterFilters
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterPage
