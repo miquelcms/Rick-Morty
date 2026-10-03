@@ -97,5 +97,5 @@ class SafeCallTest {
 
     private fun httpException(code: Int) =
         HttpException(Response.error<String>(code, "".toResponseBody()))
-
 }
+

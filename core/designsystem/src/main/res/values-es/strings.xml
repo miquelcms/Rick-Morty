@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="theme_toggle_to_dark">Cambiar a tema oscuro</string>
+    <string name="theme_toggle_to_light">Cambiar a tema claro</string>
+</resources>
