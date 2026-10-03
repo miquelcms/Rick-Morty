@@ -35,4 +35,11 @@
     <string name="character_species_disease">Enfermedad</string>
     <string name="character_species_unknown">Desconocida</string>
     <string name="character_detail_title">Personaje</string>
+    <string name="character_detail_error_title">Algo ha ido mal</string>
+    <string name="character_detail_species">Especie</string>
+    <string name="character_detail_type">Tipo</string>
+    <string name="character_detail_gender">Género</string>
+    <string name="character_detail_origin">Origen</string>
+    <string name="character_detail_location">Última ubicación conocida</string>
+    <string name="character_detail_episodes">Episodios</string>
 </resources>
