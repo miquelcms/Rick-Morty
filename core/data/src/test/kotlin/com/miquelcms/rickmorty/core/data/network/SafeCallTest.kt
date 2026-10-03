@@ -1,6 +1,6 @@
 package com.miquelcms.rickmorty.core.data.network
 
-import com.miquelcms.rickmorty.core.analytics.ErrorReporter
+import com.miquelcms.rickmorty.core.data.FakeErrorReporter
 import com.miquelcms.rickmorty.core.domain.DataError
 import com.miquelcms.rickmorty.core.domain.Result
 import kotlinx.coroutines.CancellationException
@@ -98,11 +98,4 @@ class SafeCallTest {
     private fun httpException(code: Int) =
         HttpException(Response.error<String>(code, "".toResponseBody()))
 
-    private class FakeErrorReporter : ErrorReporter {
-        val reported = mutableListOf<Throwable>()
-
-        override fun report(throwable: Throwable) {
-            reported += throwable
-        }
-    }
 }

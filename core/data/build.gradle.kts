@@ -16,9 +16,11 @@ dependencies {
 
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
+    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
+    implementation(libs.androidx.datastore.preferences)
     api(libs.retrofit)
     implementation(libs.retrofit.converter.kotlinx.serialization)
 
