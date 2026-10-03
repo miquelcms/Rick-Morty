@@ -20,28 +20,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.miquelcms.rickmorty.core.designsystem.component.RmBottomSheet
 import com.miquelcms.rickmorty.core.designsystem.component.RmButton
 import com.miquelcms.rickmorty.core.designsystem.component.RmFilterChip
 import com.miquelcms.rickmorty.core.designsystem.component.RmOutlinedButton
-import com.miquelcms.rickmorty.core.designsystem.component.RmTextField
 import com.miquelcms.rickmorty.core.designsystem.theme.RickMortyTheme
 import com.miquelcms.rickmorty.core.designsystem.theme.Spacing
 import com.miquelcms.rickmorty.feature.characters.ui.R
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterFiltersUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterGenderUi
+import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterSpeciesUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterStatusUi
 
 internal val FiltersSaver = listSaver<CharacterFiltersUi, String>(
-    save = { listOf(it.status?.name.orEmpty(), it.gender?.name.orEmpty(), it.species, it.type) },
+    save = {
+        listOf(it.status?.name.orEmpty(), it.gender?.name.orEmpty(), it.species?.name.orEmpty())
+    },
     restore = {
         CharacterFiltersUi(
             status = it[0].ifEmpty { null }?.let(CharacterStatusUi::valueOf),
             gender = it[1].ifEmpty { null }?.let(CharacterGenderUi::valueOf),
-            species = it[2],
-            type = it[3],
+            species = it[2].ifEmpty { null }?.let(CharacterSpeciesUi::valueOf),
         )
     },
 )
@@ -90,47 +90,27 @@ internal fun CharacterFiltersContent(
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.semantics { heading() },
         )
-
-        SectionTitle(text = stringResource(R.string.character_filters_status))
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-            CharacterStatusUi.entries.forEach { status ->
-                RmFilterChip(
-                    text = stringResource(status.labelRes),
-                    selected = filters.status == status,
-                    onClick = {
-                        val newStatus = if (filters.status == status) null else status
-                        onFiltersChange(filters.copy(status = newStatus))
-                    },
-                )
-            }
-        }
-
-        SectionTitle(text = stringResource(R.string.character_filters_gender))
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-            CharacterGenderUi.entries.forEach { gender ->
-                RmFilterChip(
-                    text = stringResource(gender.labelRes),
-                    selected = filters.gender == gender,
-                    onClick = {
-                        val newGender = if (filters.gender == gender) null else gender
-                        onFiltersChange(filters.copy(gender = newGender))
-                    },
-                )
-            }
-        }
-
-        RmTextField(
-            value = filters.species,
-            onValueChange = { onFiltersChange(filters.copy(species = it)) },
-            label = stringResource(R.string.character_filters_species),
-            imeAction = ImeAction.Next,
+        FilterChips(
+            title = stringResource(R.string.character_filters_status),
+            options = CharacterStatusUi.entries,
+            selected = filters.status,
+            label = { stringResource(it.labelRes) },
+            onSelectedChange = { onFiltersChange(filters.copy(status = it)) },
         )
-        RmTextField(
-            value = filters.type,
-            onValueChange = { onFiltersChange(filters.copy(type = it)) },
-            label = stringResource(R.string.character_filters_type),
+        FilterChips(
+            title = stringResource(R.string.character_filters_gender),
+            options = CharacterGenderUi.entries,
+            selected = filters.gender,
+            label = { stringResource(it.labelRes) },
+            onSelectedChange = { onFiltersChange(filters.copy(gender = it)) },
         )
-
+        FilterChips(
+            title = stringResource(R.string.character_filters_species),
+            options = CharacterSpeciesUi.entries,
+            selected = filters.species,
+            label = { stringResource(it.labelRes) },
+            onSelectedChange = { onFiltersChange(filters.copy(species = it)) },
+        )
         RmButton(
             text = stringResource(R.string.character_filters_apply),
             onClick = onApplyClick,
@@ -147,15 +127,30 @@ internal fun CharacterFiltersContent(
 }
 
 @Composable
-private fun SectionTitle(text: String) {
+private fun <T> FilterChips(
+    title: String,
+    options: List<T>,
+    selected: T?,
+    label: @Composable (T) -> String,
+    onSelectedChange: (T?) -> Unit,
+) {
     Text(
-        text = text.uppercase(),
+        text = title.uppercase(),
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier
             .padding(top = Spacing.sm)
             .semantics { heading() },
     )
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+        options.forEach { option ->
+            RmFilterChip(
+                text = label(option),
+                selected = option == selected,
+                onClick = { onSelectedChange(if (option == selected) null else option) },
+            )
+        }
+    }
 }
 
 @PreviewLightDark
@@ -166,7 +161,7 @@ private fun CharacterFiltersContentPreview() {
             CharacterFiltersContent(
                 filters = CharacterFiltersUi(
                     status = CharacterStatusUi.ALIVE,
-                    species = "Human",
+                    species = CharacterSpeciesUi.HUMAN,
                 ),
                 onFiltersChange = {},
                 onApplyClick = {},

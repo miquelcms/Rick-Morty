@@ -10,6 +10,7 @@ import com.miquelcms.rickmorty.core.ui.toUiText
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterFilters
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterGender
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterPage
+import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterSpecies
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterStatus
 import com.miquelcms.rickmorty.feature.characters.ui.FakeCharacterRepository
 import com.miquelcms.rickmorty.feature.characters.ui.FakeCharacterRepository.PageRequest
@@ -17,6 +18,7 @@ import com.miquelcms.rickmorty.feature.characters.ui.character
 import com.miquelcms.rickmorty.feature.characters.ui.characterUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterFiltersUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterGenderUi
+import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterSpeciesUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterStatusUi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
@@ -180,7 +182,7 @@ class CharacterListViewModelTest {
         val filters = CharacterFiltersUi(
             status = CharacterStatusUi.DEAD,
             gender = CharacterGenderUi.FEMALE,
-            species = "Human",
+            species = CharacterSpeciesUi.HUMAN,
         )
 
         viewModel.onAction(CharacterListAction.OnFiltersApply(filters))
@@ -188,14 +190,14 @@ class CharacterListViewModelTest {
         val expectedFilters = CharacterFilters(
             status = CharacterStatus.DEAD,
             gender = CharacterGender.FEMALE,
-            species = "Human",
+            species = CharacterSpecies.HUMAN,
         )
         assertEquals(PageRequest(1, expectedFilters, false), repository.pageRequests.last())
         assertEquals(filters, viewModel.state.value.filters)
         assertEquals(
             AnalyticsEvent(
                 name = "filters_applied",
-                params = mapOf("status" to "dead", "gender" to "female", "species" to "Human"),
+                params = mapOf("status" to "dead", "gender" to "female", "species" to "human"),
             ),
             analyticsTracker.events.last(),
         )
@@ -264,7 +266,7 @@ class CharacterListViewModelTest {
     fun `restores the query and the filters after process death`() {
         repository.pageResults[1] = Result.Success(firstPage)
         val savedStateHandle = SavedStateHandle(
-            mapOf("query" to "rick", "status" to "ALIVE", "gender" to "MALE", "type" to "Clone"),
+            mapOf("query" to "rick", "status" to "ALIVE", "gender" to "MALE", "species" to "ROBOT"),
         )
 
         val viewModel = createViewModel(savedStateHandle)
@@ -272,7 +274,7 @@ class CharacterListViewModelTest {
         val expectedFilters = CharacterFiltersUi(
             status = CharacterStatusUi.ALIVE,
             gender = CharacterGenderUi.MALE,
-            type = "Clone",
+            species = CharacterSpeciesUi.ROBOT,
         )
         assertEquals("rick", viewModel.state.value.query)
         assertEquals(expectedFilters, viewModel.state.value.filters)

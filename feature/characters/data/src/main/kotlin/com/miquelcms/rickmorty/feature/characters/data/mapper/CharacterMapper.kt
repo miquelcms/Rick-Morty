@@ -5,6 +5,7 @@ import com.miquelcms.rickmorty.feature.characters.data.remote.dto.CharacterPageD
 import com.miquelcms.rickmorty.feature.characters.domain.model.Character
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterGender
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterPage
+import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterSpecies
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterStatus
 
 internal fun CharacterPageDto.toCharacterPage() = CharacterPage(
@@ -28,6 +29,20 @@ internal fun CharacterDto.toCharacter() = Character(
 internal fun CharacterStatus.toQueryValue() = name.lowercase()
 
 internal fun CharacterGender.toQueryValue() = name.lowercase()
+
+internal fun CharacterSpecies.toQueryValue() =
+    when (this) {
+        CharacterSpecies.HUMAN -> "Human"
+        CharacterSpecies.ALIEN -> "Alien"
+        CharacterSpecies.HUMANOID -> "Humanoid"
+        CharacterSpecies.ANIMAL -> "Animal"
+        CharacterSpecies.ROBOT -> "Robot"
+        CharacterSpecies.MYTHOLOGICAL_CREATURE -> "Mythological Creature"
+        CharacterSpecies.POOPYBUTTHOLE -> "Poopybutthole"
+        CharacterSpecies.CRONENBERG -> "Cronenberg"
+        CharacterSpecies.DISEASE -> "Disease"
+        CharacterSpecies.UNKNOWN -> "unknown"
+    }
 
 private fun String.toCharacterStatus() =
     CharacterStatus.entries.find { it.name.equals(this, ignoreCase = true) }

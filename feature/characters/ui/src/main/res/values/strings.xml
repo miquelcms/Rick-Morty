@@ -19,8 +19,17 @@
     <string name="character_filters_status">Status</string>
     <string name="character_filters_gender">Gender</string>
     <string name="character_filters_species">Species</string>
-    <string name="character_filters_type">Type</string>
     <string name="character_filters_apply">Apply</string>
     <string name="character_filters_clear">Clear all</string>
     <string name="character_filters_open">Active filters: %d</string>
+    <string name="character_species_human">Human</string>
+    <string name="character_species_alien">Alien</string>
+    <string name="character_species_humanoid">Humanoid</string>
+    <string name="character_species_animal">Animal</string>
+    <string name="character_species_robot">Robot</string>
+    <string name="character_species_mythological_creature">Mythological creature</string>
+    <string name="character_species_poopybutthole">Poopybutthole</string>
+    <string name="character_species_cronenberg">Cronenberg</string>
+    <string name="character_species_disease">Disease</string>
+    <string name="character_species_unknown">Unknown</string>
 </resources>

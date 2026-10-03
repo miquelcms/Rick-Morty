@@ -20,8 +20,7 @@ internal object CharactersAnalytics {
         params = buildMap {
             filters.status?.let { put("status", it.name.lowercase()) }
             filters.gender?.let { put("gender", it.name.lowercase()) }
-            if (filters.species.isNotBlank()) put("species", filters.species)
-            if (filters.type.isNotBlank()) put("type", filters.type)
+            filters.species?.let { put("species", it.name.lowercase()) }
         },
     )
 

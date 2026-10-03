@@ -15,7 +15,6 @@ internal interface CharacterApi {
         @Query("name") name: String?,
         @Query("status") status: String?,
         @Query("species") species: String?,
-        @Query("type") type: String?,
         @Query("gender") gender: String?,
         @Header("Cache-Control") cacheControl: String?,
     ): CharacterPageDto

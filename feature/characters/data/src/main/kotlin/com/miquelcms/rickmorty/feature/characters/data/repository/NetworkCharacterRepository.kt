@@ -27,20 +27,20 @@ internal class NetworkCharacterRepository(
         filters: CharacterFilters,
         forceRefresh: Boolean,
     ): Result<CharacterPage, DataError> {
+        val species = filters.species?.toQueryValue()
         val result = safeCall(errorReporter) {
             api.getCharacters(
                 page = page,
                 name = filters.name.ifBlank { null },
                 status = filters.status?.toQueryValue(),
-                species = filters.species.ifBlank { null },
-                type = filters.type.ifBlank { null },
+                species = species,
                 gender = filters.gender?.toQueryValue(),
                 cacheControl = if (forceRefresh) NO_CACHE else null,
             )
         }
         return when (result) {
             is Result.Success -> {
-                val characterPage = result.data.toCharacterPage()
+                val characterPage = result.data.toCharacterPage().keepOnlySpecies(species)
                 characterPage.characters.forEach { cachedCharacters[it.id] = it }
                 Result.Success(characterPage)
             }
@@ -56,6 +56,13 @@ internal class NetworkCharacterRepository(
         return safeCall(errorReporter) { api.getCharacter(id) }
             .map { dto -> dto.toCharacter().also { cachedCharacters[it.id] = it } }
     }
+
+    private fun CharacterPage.keepOnlySpecies(species: String?): CharacterPage =
+        if (species == null) {
+            this
+        } else {
+            copy(characters = characters.filter { it.species.equals(species, ignoreCase = true) })
+        }
 
     private companion object {
         const val NO_CACHE = "no-cache"

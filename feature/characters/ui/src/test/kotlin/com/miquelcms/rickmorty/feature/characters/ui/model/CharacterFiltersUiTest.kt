@@ -15,16 +15,15 @@ class CharacterFiltersUiTest {
         val filters = CharacterFiltersUi(
             status = CharacterStatusUi.ALIVE,
             gender = CharacterGenderUi.FEMALE,
-            species = "Human",
-            type = "Clone",
+            species = CharacterSpeciesUi.HUMAN,
         )
 
-        assertEquals(4, filters.activeCount)
+        assertEquals(3, filters.activeCount)
     }
 
     @Test
-    fun `does not count blank texts`() {
-        val filters = CharacterFiltersUi(status = CharacterStatusUi.DEAD, species = "  ", type = "")
+    fun `counts only the filters that are set`() {
+        val filters = CharacterFiltersUi(species = CharacterSpeciesUi.ROBOT)
 
         assertEquals(1, filters.activeCount)
     }

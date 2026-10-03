@@ -13,6 +13,7 @@ import com.miquelcms.rickmorty.feature.characters.ui.mapper.toCharacterFilters
 import com.miquelcms.rickmorty.feature.characters.ui.mapper.toCharacterUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterFiltersUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterGenderUi
+import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterSpeciesUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterStatusUi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -179,15 +180,13 @@ class CharacterListViewModel(
     private fun restoreFilters() = CharacterFiltersUi(
         status = savedStateHandle.get<String>(KEY_STATUS)?.let(CharacterStatusUi::valueOf),
         gender = savedStateHandle.get<String>(KEY_GENDER)?.let(CharacterGenderUi::valueOf),
-        species = savedStateHandle[KEY_SPECIES] ?: "",
-        type = savedStateHandle[KEY_TYPE] ?: "",
+        species = savedStateHandle.get<String>(KEY_SPECIES)?.let(CharacterSpeciesUi::valueOf),
     )
 
     private fun saveFilters(filters: CharacterFiltersUi) {
         savedStateHandle[KEY_STATUS] = filters.status?.name
         savedStateHandle[KEY_GENDER] = filters.gender?.name
-        savedStateHandle[KEY_SPECIES] = filters.species
-        savedStateHandle[KEY_TYPE] = filters.type
+        savedStateHandle[KEY_SPECIES] = filters.species?.name
     }
 
     private companion object {
@@ -197,6 +196,5 @@ class CharacterListViewModel(
         const val KEY_STATUS = "status"
         const val KEY_GENDER = "gender"
         const val KEY_SPECIES = "species"
-        const val KEY_TYPE = "type"
     }
 }

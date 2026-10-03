@@ -8,6 +8,7 @@ import com.miquelcms.rickmorty.feature.characters.domain.model.Character
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterFilters
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterGender
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterPage
+import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterSpecies
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterStatus
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
@@ -53,14 +54,32 @@ class NetworkCharacterRepositoryTest {
         val filters = CharacterFilters(
             name = "rick",
             status = CharacterStatus.ALIVE,
+            species = CharacterSpecies.MYTHOLOGICAL_CREATURE,
             gender = CharacterGender.MALE,
         )
 
         repository.getCharacters(2, filters, forceRefresh = false)
 
         val request = server.takeRequest()
-        assertEquals("/character?page=2&name=rick&status=alive&gender=male", request.target)
+        assertEquals(
+            "/character?page=2&name=rick&status=alive&species=Mythological%20Creature&gender=male",
+            request.target,
+        )
         assertNull(request.headers["Cache-Control"])
+    }
+
+    @Test
+    fun `keeps only the characters of the requested species`() = runTest {
+        val humanoidJson = RICK_JSON
+            .replace("\"id\": 1", "\"id\": 2")
+            .replace("\"Human\"", "\"Humanoid\"")
+        val pageJson = """{ "info": { "next": null }, "results": [$RICK_JSON, $humanoidJson] }"""
+        server.enqueue(MockResponse.Builder().body(pageJson).build())
+        val filters = CharacterFilters(species = CharacterSpecies.HUMAN)
+
+        val result = repository.getCharacters(1, filters, forceRefresh = false)
+
+        assertEquals(Result.Success(CharacterPage(listOf(RICK), hasNextPage = false)), result)
     }
 
     @Test
