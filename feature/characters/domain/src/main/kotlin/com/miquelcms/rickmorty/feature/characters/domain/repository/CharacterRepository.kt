@@ -7,7 +7,11 @@ import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterFilters
 import com.miquelcms.rickmorty.feature.characters.domain.model.CharacterPage
 
 interface CharacterRepository {
-    suspend fun getCharacters(page: Int, filters: CharacterFilters): Result<CharacterPage, DataError>
+    suspend fun getCharacters(
+        page: Int,
+        filters: CharacterFilters,
+        forceRefresh: Boolean,
+    ): Result<CharacterPage, DataError>
 
     suspend fun getCharacter(id: Int): Result<Character, DataError>
 }

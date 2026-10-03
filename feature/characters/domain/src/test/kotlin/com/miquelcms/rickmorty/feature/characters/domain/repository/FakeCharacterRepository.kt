@@ -10,8 +10,11 @@ class FakeCharacterRepository : CharacterRepository {
 
     var characterResult: Result<Character, DataError> = Result.Failure(DataError.Network.NOT_FOUND)
 
-    override suspend fun getCharacters(page: Int, filters: CharacterFilters): Result<CharacterPage, DataError> =
-        error("Not used in these tests")
+    override suspend fun getCharacters(
+        page: Int,
+        filters: CharacterFilters,
+        forceRefresh: Boolean,
+    ): Result<CharacterPage, DataError> = error("Not used in these tests")
 
     override suspend fun getCharacter(id: Int): Result<Character, DataError> = characterResult
 }
