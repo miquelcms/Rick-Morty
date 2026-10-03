@@ -15,4 +15,12 @@
     <string name="character_list_clear_search">Clear search</string>
     <string name="character_card_open">open the details</string>
     <string name="action_retry">Try again</string>
+    <string name="character_filters_title">Filters</string>
+    <string name="character_filters_status">Status</string>
+    <string name="character_filters_gender">Gender</string>
+    <string name="character_filters_species">Species</string>
+    <string name="character_filters_type">Type</string>
+    <string name="character_filters_apply">Apply</string>
+    <string name="character_filters_clear">Clear all</string>
+    <string name="character_filters_open">Active filters: %d</string>
 </resources>

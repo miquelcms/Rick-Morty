@@ -11,24 +11,30 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.miquelcms.rickmorty.core.designsystem.component.RmIconButton
 import com.miquelcms.rickmorty.core.designsystem.component.RmMessage
 import com.miquelcms.rickmorty.core.designsystem.component.RmPullToRefreshBox
 import com.miquelcms.rickmorty.core.designsystem.component.RmSearchField
 import com.miquelcms.rickmorty.core.designsystem.component.RmThemeToggleButton
 import com.miquelcms.rickmorty.core.designsystem.component.RmTopBar
+import com.miquelcms.rickmorty.core.designsystem.icon.RmIcons
 import com.miquelcms.rickmorty.core.designsystem.theme.RickMortyTheme
 import com.miquelcms.rickmorty.core.ui.ObserveAsEvents
 import com.miquelcms.rickmorty.core.ui.UiText
 import com.miquelcms.rickmorty.core.ui.asString
 import com.miquelcms.rickmorty.feature.characters.ui.R
+import com.miquelcms.rickmorty.feature.characters.ui.list.component.CharacterFiltersSheet
 import com.miquelcms.rickmorty.feature.characters.ui.list.component.CharacterGrid
 import com.miquelcms.rickmorty.feature.characters.ui.list.component.CharacterGridSkeleton
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterStatusUi
@@ -74,12 +80,20 @@ fun CharacterListScreen(
     onToggleTheme: () -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
+    var isFiltersSheetVisible by rememberSaveable { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             Column {
                 RmTopBar(
                     title = stringResource(R.string.character_list_title),
                     actions = {
+                        RmIconButton(
+                            icon = RmIcons.Filter,
+                            contentDescription = filtersDescription(state.filters.activeCount),
+                            onClick = { isFiltersSheetVisible = true },
+                            badgeCount = state.filters.activeCount,
+                        )
                         RmThemeToggleButton(isDarkTheme = isDarkTheme, onClick = onToggleTheme)
                     },
                 )
@@ -131,7 +145,23 @@ fun CharacterListScreen(
             }
         }
     }
+    if (isFiltersSheetVisible) {
+        CharacterFiltersSheet(
+            filters = state.filters,
+            onApply = { onAction(CharacterListAction.OnFiltersApply(it)) },
+            onDismiss = { isFiltersSheetVisible = false },
+        )
+    }
 }
+
+@Composable
+private fun filtersDescription(activeCount: Int): String =
+    if (activeCount == 0) {
+        stringResource(R.string.character_filters_title)
+    } else {
+        stringResource(R.string.character_filters_open, activeCount)
+    }
+
 
 @Composable
 private fun CenteredMessage(content: @Composable () -> Unit) {
