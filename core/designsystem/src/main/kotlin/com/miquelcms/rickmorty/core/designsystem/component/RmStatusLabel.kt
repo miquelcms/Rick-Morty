@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import com.miquelcms.rickmorty.core.designsystem.theme.RickMortyTheme
 import com.miquelcms.rickmorty.core.designsystem.theme.Spacing
 
+private val DotSize = 8.dp
+
 enum class RmStatusType {
     POSITIVE,
     NEGATIVE,
@@ -39,7 +41,7 @@ fun RmStatusLabel(
     ) {
         Box(
             modifier = Modifier
-                .size(8.dp)
+                .size(DotSize)
                 .background(color = type.color(), shape = CircleShape),
         )
         Text(

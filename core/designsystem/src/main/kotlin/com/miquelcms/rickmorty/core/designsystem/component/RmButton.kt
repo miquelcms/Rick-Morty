@@ -12,9 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.dp
 import com.miquelcms.rickmorty.core.designsystem.theme.RickMortyTheme
 import com.miquelcms.rickmorty.core.designsystem.theme.Spacing
+import com.miquelcms.rickmorty.core.designsystem.theme.Stroke
 
 @Composable
 fun RmButton(
@@ -41,7 +41,7 @@ fun RmOutlinedButton(
         onClick = onClick,
         modifier = modifier,
         shape = MaterialTheme.shapes.small,
-        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onSurface),
+        border = BorderStroke(width = Stroke.thin, color = MaterialTheme.colorScheme.onSurface),
     ) {
         Text(
             text = text.uppercase(),
