@@ -2,6 +2,10 @@
 
 Android app that lists the characters of [The Rick and Morty API](https://rickandmortyapi.com) and shows the detail of each one. It was built as a technical test.
 
+
+https://github.com/user-attachments/assets/4289bcc5-f035-4ffe-bf54-3b3f72bb6ef1
+
+
 ## What it does
 
 - Grid of characters with infinite scroll and pull to refresh.
@@ -89,6 +93,7 @@ Dependency injection uses Koin. Each module that provides dependencies declares 
 ```bash
 ./gradlew test
 ```
+
 
 Unit tests cover the view models, the repositories, the remote data source, the use case, the back stack rules and the Koin graph. There are no instrumented or UI tests.
 
