@@ -13,7 +13,6 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
         dependencies {
             val bom = platform(libs.findLibrary("androidx-compose-bom").get())
             "implementation"(bom)
-            "androidTestImplementation"(bom)
             "implementation"(libs.findLibrary("androidx-compose-ui-tooling-preview").get())
             "debugImplementation"(libs.findLibrary("androidx-compose-ui-tooling").get())
         }

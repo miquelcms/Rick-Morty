@@ -12,10 +12,7 @@ private val JVM_TARGET = JvmTarget.JVM_17
 internal fun Project.configureAndroid(commonExtension: CommonExtension) {
     commonExtension.apply {
         compileSdk { version = release(libs.versionInt("compileSdk")) }
-        defaultConfig.apply {
-            minSdk { version = release(libs.versionInt("minSdk")) }
-            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        }
+        defaultConfig.minSdk { version = release(libs.versionInt("minSdk")) }
         compileOptions.apply {
             sourceCompatibility = JAVA_VERSION
             targetCompatibility = JAVA_VERSION
