@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.analytics)
 
+    implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)

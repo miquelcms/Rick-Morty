@@ -10,7 +10,7 @@ https://github.com/user-attachments/assets/4289bcc5-f035-4ffe-bf54-3b3f72bb6ef1
 
 - Grid of characters with infinite scroll and pull to refresh.
 - Search by name and filters by status, gender and species.
-- Character detail with the episodes the character appears in.
+- Character detail with the episodes the character appears in. On wide windows, such as a phone in landscape, the image sits next to the data.
 - Light and dark theme. It follows the system until the user changes it, and the choice is saved.
 - A notice when there is no connection. What was already downloaded can still be browsed.
 - English and Spanish.
@@ -101,7 +101,7 @@ Unit tests cover the view models, the repositories, the remote data source, the 
 
 - Species, type, origin and location are shown as the API sends them, in English.
 - There is no local database. Browsing without connection depends on the HTTP cache.
-- There is no specific layout for tablets or landscape.
+- Only the detail changes its layout on wide windows. There is no list and detail side by side on large screens.
 - Analytics and error reporting only write to Logcat.
 
 ## Credits
