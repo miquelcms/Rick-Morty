@@ -40,6 +40,7 @@ import com.miquelcms.rickmorty.feature.characters.ui.detail.component.CharacterI
 import com.miquelcms.rickmorty.feature.characters.ui.detail.component.EpisodeItem
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterDetailUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterGenderUi
+import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterImageKey
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterStatusUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.EpisodeUi
 import org.koin.androidx.compose.koinViewModel
@@ -127,6 +128,7 @@ private fun CharacterDetailContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
+                sharedElementKey = CharacterImageKey(character.id),
             )
         }
         item(contentType = "info") {

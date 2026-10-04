@@ -22,6 +22,7 @@ import com.miquelcms.rickmorty.core.designsystem.component.RmStatusLabel
 import com.miquelcms.rickmorty.core.designsystem.theme.RickMortyTheme
 import com.miquelcms.rickmorty.core.designsystem.theme.Spacing
 import com.miquelcms.rickmorty.feature.characters.ui.R
+import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterImageKey
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterStatusUi
 import com.miquelcms.rickmorty.feature.characters.ui.model.CharacterUi
 
@@ -44,6 +45,7 @@ internal fun CharacterCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f),
+            sharedElementKey = CharacterImageKey(character.id),
         )
         Column(
             modifier = Modifier.padding(horizontal = Spacing.sm, vertical = Spacing.sm),
