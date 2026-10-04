@@ -3,7 +3,7 @@
 Android app that lists the characters of [The Rick and Morty API](https://rickandmortyapi.com) and shows the detail of each one. It was built as a technical test.
 
 
-https://github.com/user-attachments/assets/4289bcc5-f035-4ffe-bf54-3b3f72bb6ef1
+https://github.com/user-attachments/assets/8a71b709-29cb-454e-9957-8a566487497a
 
 
 ## What it does
