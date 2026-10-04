@@ -23,6 +23,8 @@ It needs JDK 17 or newer and an Android Studio version that supports AGP 9.4. Th
 
 `build` compiles every module and runs lint and the unit tests. The release build goes through R8 and is signed with the debug key, so it can be installed straight from a clone.
 
+GitHub Actions runs the same `build` on every push to `main` and on every pull request (`.github/workflows/build.yml`).
+
 ## Modules
 
 ```mermaid
@@ -96,7 +98,6 @@ Unit tests cover the view models, the repositories, the remote data source, the 
 - There is no local database. Browsing without connection depends on the HTTP cache.
 - There is no specific layout for tablets or landscape.
 - Analytics and error reporting only write to Logcat.
-- There is no CI.
 
 ## Credits
 
